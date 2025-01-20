@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Butter",
+        "quantity": 1000,
+        "unit": "Gram"
+     },
+     {
+        "name": "Egg",
+        "quantity": 100,
+        "unit": "Piece"
+     },
+     {
+        "name": "Bacon",
+        "quantity": 1000,
+        "unit": "Gram"
+     },
+     {
+        "name": "Milk",
+        "quantity": 2000,
+        "unit": "Millilitres"
+     },
+     {
+        "name": "Salt",
+        "quantity": 500,
+        "unit": "Gram"
+     },
+     {
+        "name": "Pepper",
+        "quantity": 500,
+        "unit": "Gram"
+     }
+]
