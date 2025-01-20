@@ -30,6 +30,7 @@ System consists of three services, as shown in the image above:
 Note:   
 [Docker](https://www.docker.com/products/docker-desktop/) is mandatory for running this system's dependencies.  
 [.Net 6](https://dotnet.microsoft.com/en-us/download) is mandatory for running the services.
+[.Net 8](https://dotnet.microsoft.com/en-us/download) is mandatory for running the services.
 
 ---
 
