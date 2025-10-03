@@ -2,6 +2,7 @@ name: ReSharper InspectCode (PR)
 
 on:
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
