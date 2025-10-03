@@ -1,0 +1,72 @@
+name: ReSharper InspectCode (PR)
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: inspectcode-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  inspectcode:
+    name: InspectCode
+    runs-on: ubuntu-latest
+    env:
+      # Change this to your solution file
+      SOLUTION_PATH: Cookbook.Services/Cookbook.Services.sln
+      # Adjust the SDK version(s) your repo needs
+      DOTNET_VERSION: 8.0.x
+      # Set to 'true' to fail the job if any issues are found
+      FAIL_ON_ISSUES: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: JetBrains ReSharper Inspect Code
+        # You asked to use this official action
+        uses: JetBrains/ReSharper-InspectCode@v0.10
+        with:
+          # Required: your solution file
+          solution: ${{ env.SOLUTION_PATH }}
+          # Produce SARIF for code scanning
+          format: Sarif
+          output: resharper-report.sarif
+          # Optional tuning
+          verbosity: WARN
+          # build: true
+          # tool-version: 2025.2.0
+
+      - name: Upload SARIF to code scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: resharper-report.sarif
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resharper-inspectcode-report
+          path: resharper-report.sarif
+
+      - name: Install jq (for fail-on-issues)
+        if: env.FAIL_ON_ISSUES == 'true'
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Fail on issues (optional)
+        if: env.FAIL_ON_ISSUES == 'true'
+        run: |
+          count=$(jq '[.runs[].results[]] | length' resharper-report.sarif)
+          echo "Issue count: $count"
+          if [ "$count" -gt 0 ]; then
+            echo "::error::ReSharper found $count issues"
+            exit 1
+          fi
